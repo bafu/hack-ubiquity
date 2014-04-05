@@ -2,7 +2,21 @@
 Markdown live preview: http://tmpvar.com/markdown.html
 -->
 
-# Execution Order of Ubiquity Plugins
+# Concepts
+
+## Ubiquity Greeter and OEM Mode
+
+Greeter gives user two choices: install system directly, or try the system first.
+
+OEM mode (TBD)
+
+
+## Ubiquity Plugins
+
+The responsibility of [Ubiquity Plugins](https://wiki.ubuntu.com/Ubiquity/Plugins) is to collect user's configurations.
+
+Execution order of Ubiquity plugins:
+
  * language
  * prepare
  * wireless
@@ -14,10 +28,7 @@ Markdown live preview: http://tmpvar.com/markdown.html
  * tasks
  * webcam
 
---------------------------------------------------------------------------------
-# Ubiquity Greeter And OEM Mode
 
---------------------------------------------------------------------------------
 # Debinan pakcages created by Ubiquity
 
 <table>
@@ -81,7 +92,7 @@ Markdown live preview: http://tmpvar.com/markdown.html
 
  * finish-install.d usr/lib
 
---------------------------------------------------------------------------------
+
 # Debugging
 
 * [Hacking on Ubiquity, the setup](http://agateau.com/2013/04/30/hacking-on-ubiquity-the-setup/)
@@ -94,7 +105,7 @@ kernel commandline parameter
  * phase 1 & 2: automatic-ubiquity
  * phase 3: ubiquity-dm vt7 :0 oem /usr/sbin/oem-config-wrapper --only # ubiquity-dm <vt> <display> <username> <args of dm.run>
 
---------------------------------------------------------------------------------
+
 # Code Flow
 
 debian/ubiquity.ubiquity.upstart  # kernel parameter `automatic-ubiquity' in phase1 and phase2 
@@ -111,46 +122,6 @@ debian/ubiquity.ubiquity.upstart  # kernel parameter `automatic-ubiquity' in pha
         oem-config-remove-gtk  # Remove ubiquity-related packages
 
 
---------------------------------------------------------------------------------
-# Ubiquity Plugin
-
-https://wiki.ubuntu.com/Ubiquity/Plugins
-
-I guess
- * PageGtk will be executed to setup the GUI.
- * Page.run will be executed to enter main loop.
-  * self.ui equals to the PageGtk instance?
-  * However, dell-eula does not have Page and can work.  It seems not to be necessary.
-
-Plugin Structure
-
-    from ubiquity import plugin
-    plugin.PluginUI
-      PageBase
-        PageGtk
-        PageKde
-        PageNoninteractive
-          __init__
-          set_language
-          get_language
-        PageDebconf
-          __init__
-    
-    plugin.Plugin
-      Page
-        prepare
-        run
-        cancel_handler
-        ok_handler
-        cleanup
-    
-    # Perform install-time work
-    plugin.InstallPlugin
-      Install
-        prepare (optional)
-        install
-
---------------------------------------------------------------------------------
 # Code Structure
 
 execute plugins
@@ -227,4 +198,40 @@ postinstall (triggerred by the last "on_next_clicked")
     class DebconfFilter:
       def start():
 
+
+# Ubiquity Plugins, More Information
+
+I guess
+ * PageGtk will be executed to setup the GUI.
+ * Page.run will be executed to enter main loop.
+  * self.ui equals to the PageGtk instance?
+  * However, dell-eula does not have Page and can work.  It seems not to be necessary.
+
+Plugin Structure
+
+    from ubiquity import plugin
+    plugin.PluginUI
+      PageBase
+        PageGtk
+        PageKde
+        PageNoninteractive
+          __init__
+          set_language
+          get_language
+        PageDebconf
+          __init__
+    
+    plugin.Plugin
+      Page
+        prepare
+        run
+        cancel_handler
+        ok_handler
+        cleanup
+    
+    # Perform install-time work
+    plugin.InstallPlugin
+      Install
+        prepare (optional)
+        install
 
