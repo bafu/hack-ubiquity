@@ -13,7 +13,10 @@ OEM mode (TBD)
 
 ## Ubiquity Plugins
 
-The responsibility of [Ubiquity Plugins](https://wiki.ubuntu.com/Ubiquity/Plugins) is to collect user's configurations.
+[Ubiquity Plugins](https://wiki.ubuntu.com/Ubiquity/Plugins) is used to:
+
+ 1. Collect user's configurations
+ 1. Execute specific actions
 
 Execution order of Ubiquity plugins:
 
