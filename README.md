@@ -20,19 +20,56 @@ Markdown live preview: http://tmpvar.com/markdown.html
 --------------------------------------------------------------------------------
 # Debinan pakcages created by Ubiquity
 
- * oem-config Perform end-user configuration after initial OEM installation
- * oem-config-check enter OEM mode if requested
- * oem-config-debconf debconf frontend for end-user post-OEM-install configuration
- * oem-config-gtk     GTK+    frontend for end-user post-OEM-install configuration
- * oem-config-kde     KDE     frontend for end-user post-OEM-install configuration
- * oem-config-remaster Remaster a CD with additional oem-config functionality
- * oem-config-udeb Prepare for OEM configuration
-
- * ubiquity Ubuntu live CD installer
- * ubiquity-frontend-debconf  debconf frontend for Ubiquity live installer
- * ubiquity-frontend-gtk      GTK+    frontend for Ubiquity live installer
- * ubiquity-frontend-kde      KDE     frontend for Ubiquity live installer
- * ubiquity-ubuntu-artwork Ubuntu artwork for Ubiquity live installer
+<table>
+  <tr>
+    <td>oem-config</td>
+    <td>Perform end-user configuration after initial OEM installation</td>
+  </tr>
+  <tr>
+    <td>oem-config-check</td>
+    <td>enter OEM mode if requested</td>
+  </tr>
+  <tr>
+    <td>oem-config-debconf</td>
+    <td>debconf frontend for end-user post-OEM-install configuration</td>
+  </tr>
+  <tr>
+    <td>oem-config-gtk</td>
+    <td>GTK+ frontend for end-user post-OEM-install configuration</td>
+  </tr>
+  <tr>
+    <td>oem-config-kde</td>
+    <td>KDE frontend for end-user post-OEM-install configuration</td>
+  </tr>
+  <tr>
+    <td>oem-config-remaster</td>
+    <td>Remaster a CD with additional oem-config functionality</td>
+  </tr>
+  <tr>
+    <td>oem-config-udeb</td>
+    <td>Prepare for OEM configuration</td>
+  </tr>
+  <tr>
+    <td>ubiquity</td>
+    <td>Ubuntu live CD installer</td>
+  </tr>
+  <tr>
+    <td>ubiquity-frontend-debconf</td>
+    <td>debconf frontend for Ubiquity live installer</td>
+  </tr>
+  <tr>
+    <td>ubiquity-frontend-gtk</td>
+    <td>GTK+ frontend for Ubiquity live installer</td>
+  </tr>
+  <tr>
+    <td>ubiquity-frontend-kde</td>
+    <td>KDE frontend for Ubiquity live installer</td>
+  </tr>
+  <tr>
+    <td>ubiquity-ubuntu-artwork</td>
+    <td>Ubuntu artwork for Ubiquity live installer</td>
+  </tr>
+</table>
 
 **oem-config-check.install**
 
