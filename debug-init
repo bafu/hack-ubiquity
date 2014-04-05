@@ -1,0 +1,36 @@
+#!/bin/sh
+
+IP=192.168.56.102
+MOUNTPOINT="$PWD/mnt"
+
+usage() {
+    echo "USAGE: debug-init mount|umount|ssh"
+    exit 1
+}
+
+main() {
+    # TODO: need to be executed with sudo
+
+    if [ ! -e $MOUNTPOINT ]; then
+        echo "ERROR: $MOUNTPOINT does not exist."
+        exit 2
+    fi
+  
+    case $1 in
+        mount)
+            sshfs ubuntu@$IP:/ "$MOUNTPOINT"
+            #sshfs ubuntu@$IP:/ "$MOUNTPOINT" -o allow_other
+            ;;
+        umount)
+            sudo umount "$MOUNTPOINT"
+            ;;
+        ssh)
+            ssh ubuntu@$IP
+            ;;
+        *)
+            usage
+            ;;
+    esac
+}
+
+main $1
