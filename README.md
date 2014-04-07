@@ -127,6 +127,27 @@ debian/ubiquity.ubiquity.upstart  # kernel parameter `automatic-ubiquity' in pha
 
 # Code Structure
 
+## Components
+                                  I                    I
+                       UntrustedBase ---> plugin.PluginUI ---> PageGTK
+                             |
+                             | I
+                             v          I                  I
+    DebconfFilter ---> FilteredCommand ---> plugin.Plugin .--> Page
+                             |                            |                          I
+                             | I                          `--> plugin.InstallPlugin ---> Install
+                             v
+             components.plugininstall.Install 
+                             |
+                             |
+                             v
+           Controller ---> Wizard
+                             |
+                             |
+                             v
+                          Ubiquity
+
+## Misc
 execute plugins
 postinstall (triggerred by the last "on_next_clicked")
 
