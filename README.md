@@ -10,7 +10,6 @@ Greeter gives user two choices: install system directly, or try the system first
 
 OEM mode (TBD)
 
-
 ## Ubiquity Plugins
 
 [Ubiquity Plugins](https://wiki.ubuntu.com/Ubiquity/Plugins) is used to:
@@ -20,16 +19,16 @@ OEM mode (TBD)
 
 Execution order of Ubiquity plugins:
 
- * language
- * prepare
- * wireless
- * partman
- * timezone
- * console-setup
- * usersetup
- * network
- * tasks
- * webcam
+ 1. language
+ 1. prepare
+ 1. wireless
+ 1. partman
+ 1. timezone
+ 1. console-setup
+ 1. usersetup
+ 1. network
+ 1. tasks
+ 1. webcam
 
 
 # Debinan pakcages created by Ubiquity
@@ -105,8 +104,34 @@ Execution order of Ubiquity plugins:
 
 kernel commandline parameter
 
- * phase 1 & 2: automatic-ubiquity
- * phase 3: ubiquity-dm vt7 :0 oem /usr/sbin/oem-config-wrapper --only # ubiquity-dm <vt> <display> <username> <args of dm.run>
+* phase 1: automatic-ubiquity
+* phase 2: automatic-ubiquity
+* phase 3:
+ * # ubiquity-dm <vt> <display> <username> <program> [<arguments>]
+ * ubiquity-dm vt7 :0 oem /usr/sbin/oem-config-wrapper --only
+
+## Utilities Usage
+
+* For host
+ * debug-init: Initialize host debugging environment and provide mount/umount/ssh commands to access target remotely.
+* For target
+ * debug-ubiquity.sh: Launch Ubiquity with proper debugging parameters.
+
+## workflow
+
+    # launch ubiquity
+    host $ ./debug-init ssh
+    targ $ ./debug-ubiquity.sh start &
+    targ $ DISPLAY=:0 gnome-terminal &
+
+    # modify ubiquity
+    host $ vim mnt/<target file>
+
+## Other Tips
+
+* Print debugging messages directly via syslog.syslog().
+* Use watch command to monitor syslog.
+ * $ watch -n 1 tail -n 30 /var/log/syslog
 
 
 # Code Flow
@@ -114,21 +139,31 @@ kernel commandline parameter
 debian/ubiquity.ubiquity.upstart  # kernel parameter `automatic-ubiquity' in phase1 and phase2 
 
     ubiquity-dm
-      oem-config-wrapper
-        oem-config  # symbolic link of /usr/lib/ubiquity/bin/ubiquity
-        ubiquity (is /usr/bin/ubiquity an alias of ubiquity-wrapper?)
-        ubiquity (real one, but when/where to call it?)
-          install
-            wizard.run
-          run_oem_hooks  # If oem_config is True.
-                         # Run hook scripts from /usr/lib/oem-config/post-install.
-        oem-config-remove-gtk  # Remove ubiquity-related packages
+    `-- oem-config-wrapper
+        |-- oem-config  # symbolic link of /usr/lib/ubiquity/bin/ubiquity
+        |-- ubiquity (is /usr/bin/ubiquity an alias of ubiquity-wrapper?)
+        |-- ubiquity (real one, but when/where to call it?)
+        |   |-- # Set locale to UTF-8
+        |   |-- # Parse CLI args
+        |   |-- # Set environment variables
+        |   |-- # Set proper authority
+        |   |-- install
+        |   |     `-- wizard.run
+        |   |         |--  start -> process_input .
+        |   |         |--  ok_handler             `-> debconffilter_done -> find_next_step
+        |   |         `--  # 1. postinstall starts after all the questions are
+        |   |              #    answered and slideshow appears.
+        |   |              # 2. plugininstall.py is executed in postinstall phase.
+        |   `-- run_oem_hooks
+        |       |-- # If oem_config is True
+        |       `-- # Run hook scripts in /usr/lib/oem-config/post-install
+        `--  oem-config-remove-gtk  # Remove ubiquity-related packages
 
 
 # Code Structure
 
-## Components
-                                  I                    I
+## Components Relationship
+                                      I                    I
                        UntrustedBase ---> plugin.PluginUI ---> PageGTK
                              |
                              | I
@@ -137,7 +172,7 @@ debian/ubiquity.ubiquity.upstart  # kernel parameter `automatic-ubiquity' in pha
                              |                            |                          I
                              | I                          `--> plugin.InstallPlugin ---> Install
                              v
-             components.plugininstall.Install 
+             components.plugininstall.Install (dbfilter)
                              |
                              |
                              v
@@ -146,6 +181,40 @@ debian/ubiquity.ubiquity.upstart  # kernel parameter `automatic-ubiquity' in pha
                              |
                              v
                           Ubiquity
+
+    +--------------------------------+
+    |    I                           |
+    | A ---> B: A is inheritted by B |
+    |                                |
+    | A ---> B: A is used by B       |
+    +--------------------------------+
+
+## Component Descriptions
+
+* Wizard: The core component of Ubiquity
+ * init(): sets up plugins.
+ * run(): the main part.
+  * Get user inputs via pages.
+  * Postinstall with slideshow.
+  * Quit/reboot/shutdown.
+ * find_next_step():
+
+* Controller: Define the control in a plugin.
+
+* FilteredCommand:
+ * ok_handler(): when ok or forward is selected.
+  * Triggered by GUI ok/forward button handler (on_next_clicked()). 
+  * Execute frontend.debconffilter_done(). (entry point of postinstall?)
+
+* DebconfFilter: Filte a debconf command from another process and execute it
+ * Get a command from another process, check it with the valid_command, execute the valid command
+ * Input:
+  * db
+  * widgets
+
+* UntrustedBase: Base template class for accessing Debconf?
+
+* DebconfCommunicator: Wrapper of debconf-communicate used by frontends.
 
 ## Misc
 execute plugins
@@ -169,8 +238,19 @@ postinstall (triggerred by the last "on_next_clicked")
     
     debconffilter
     
-    [Components]
-    class Wizard(BaseFrontend):
+    [Frontend]
+    class Component
+        self.controller  # instance of Controller
+
+    class Controller
+        self._wizard = wizard  # instance of Wizard
+
+       # Define frontend's page actions.  <plugin>.controller
+    
+    class BaseFrontend
+
+
+    class Wizard(BaseFrontend)
       # Primary structure of GUI.  Collecte system configs from user
     
       self.modules  # list containing ordered plugins
@@ -183,9 +263,6 @@ postinstall (triggerred by the last "on_next_clicked")
         if finished_step == last_page:
           dbfilter = plugininstall.Install(self)
           dbfilter.start(auto_process=True)
-    
-    class Controller
-       # Define actions of a plugin.  <plugin>.controller
     
     ## Execute plugininstall
     # ubiquity/components/plugininstall.py
@@ -258,4 +335,3 @@ Plugin Structure
       Install
         prepare (optional)
         install
-

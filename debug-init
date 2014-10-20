@@ -1,6 +1,9 @@
 #!/bin/sh
 
-IP=192.168.56.102
+USERNAME="u"
+IP=10.101.46.252
+#USERNAME="ubuntu"
+#IP=192.168.56.102
 MOUNTPOINT="$PWD/mnt"
 
 usage() {
@@ -18,14 +21,14 @@ main() {
   
     case $1 in
         mount)
-            sshfs ubuntu@$IP:/ "$MOUNTPOINT"
+            sshfs $USERNAME@$IP:/ "$MOUNTPOINT"
             #sshfs ubuntu@$IP:/ "$MOUNTPOINT" -o allow_other
             ;;
         umount)
             sudo umount "$MOUNTPOINT"
             ;;
         ssh)
-            ssh ubuntu@$IP
+            ssh $USERNAME@$IP
             ;;
         *)
             usage
