@@ -6,7 +6,7 @@ case $1 in
     start)
         # ubiquity-dm <vt> <display> <username> <args of dm.run>
         #sudo ubiquity-dm vt7 :0 ubuntu /usr/sbin/oem-config-wrapper --only
-        sudo ubiquity-dm vt7 :0 root /usr/sbin/oem-config-wrapper --only
+        sudo ubiquity-dm vt7 :0 root /usr/sbin/oem-config-wrapper --only --debug
         ;;
     stop)
         sudo pkill Xorg

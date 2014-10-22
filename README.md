@@ -4,6 +4,13 @@ Markdown live preview: http://tmpvar.com/markdown.html
 
 # Concepts
 
+    Init  Plugin1  Plugin2  ...  PluginN  Postinstall  Finish
+      |------|--------|-------------|----------|----------|
+
+
+Ubiquity collects answers of questions from plugins, and then starts to install
+system based on these configuration values in Debconf.
+
 ## Ubiquity Greeter and OEM Mode
 
 Greeter gives user two choices: install system directly, or try the system first.
@@ -164,7 +171,7 @@ debian/ubiquity.ubiquity.upstart  # kernel parameter `automatic-ubiquity' in pha
 
 ## Components Relationship
                                       I                    I
-                       UntrustedBase ---> plugin.PluginUI ---> PageGTK
+                       UntrustedBase ---> plugin.PluginUI ---> PageBase ---> Page<frontend>
                              |
                              | I
                              v          I                  I
@@ -198,6 +205,7 @@ debian/ubiquity.ubiquity.upstart  # kernel parameter `automatic-ubiquity' in pha
   * Postinstall with slideshow.
   * Quit/reboot/shutdown.
  * find_next_step():
+ * debconffilter_done():
 
 * Controller: Define the control in a plugin.
 
@@ -209,8 +217,9 @@ debian/ubiquity.ubiquity.upstart  # kernel parameter `automatic-ubiquity' in pha
 * DebconfFilter: Filte a debconf command from another process and execute it
  * Get a command from another process, check it with the valid_command, execute the valid command
  * Input:
-  * db
-  * widgets
+  * db: DebconfCommunicator object
+  * widgets: The dictionary whose keys are XXX and values are
+             <plugin>.Page objects and plugininstall.Install.
 
 * UntrustedBase: Base template class for accessing Debconf?
 
@@ -302,36 +311,44 @@ postinstall (triggerred by the last "on_next_clicked")
 
 # Ubiquity Plugins, More Information
 
-I guess
+Page<frontend> and Page
  * PageGtk will be executed to setup the GUI.
  * Page.run will be executed to enter main loop.
   * self.ui equals to the PageGtk instance?
   * However, dell-eula does not have Page and can work.  It seems not to be necessary.
 
+Install
+ * Plugin actions executed in the postinstall phase.
+
 Plugin Structure
 
     from ubiquity import plugin
-    plugin.PluginUI
-      PageBase
-        PageGtk
-        PageKde
-        PageNoninteractive
-          __init__
-          set_language
-          get_language
-        PageDebconf
-          __init__
-    
-    plugin.Plugin
-      Page
-        prepare
-        run
-        cancel_handler
-        ok_handler
-        cleanup
-    
-    # Perform install-time work
-    plugin.InstallPlugin
-      Install
-        prepare (optional)
-        install
+    |-- plugin.PluginUI
+    |     |-- PageBase
+    |     |     PageGtk
+    |     |     PageKde
+    |     |     PageNoninteractive
+    |     |       __init__
+    |     |       set_language
+    |     |       get_language
+    |     `--   PageDebconf
+    |             __init__
+    |   
+    |-- plugin.Plugin
+    |     Page
+    |       prepare
+    |       run
+    |       cancel_handler
+    |       ok_handler
+    |       cleanup
+    |   
+    `-- plugin.InstallPlugin
+          Install
+            prepare (optional)
+            install
+
+
+# Glossary
+
+widget
+  GTK+ Widget?
