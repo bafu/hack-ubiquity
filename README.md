@@ -119,7 +119,7 @@ kernel commandline parameter
 * phase 2: automatic-ubiquity
 * phase 3:
  * # ubiquity-dm <vt> <display> <username> <program> [<arguments>]
- * ubiquity-dm vt7 :0 oem /usr/sbin/oem-config-wrapper --only
+ * ubiquity-dm vt7 :0 oem /usr/sbin/oem-config-wrapper --only --debug
 
 ## Utilities Usage
 
@@ -187,6 +187,19 @@ debian/ubiquity.ubiquity.upstart  # kernel parameter `automatic-ubiquity' in pha
         |   |       |   # 1. postinstall starts after all the questions are
         |   |       |   #    answered and slideshow appears.
         |   |       |   # 2. plugininstall.py executes the install actions of plugins.
+        |   |       |   #   * prepare() returns /usr/share/ubiquity/plugininstall.py
+        |   |       |   #     - Execute configure_{python, network, locale, apt}()
+        |   |       |   #     - Execute configure_plugins()
+        |   |       |   #       + Execute Install of plugins
+        |   |       |   #     - Execute run_target_config_hooks()
+        |   |       |   #     - Execute install_language_packs()
+        |   |       |   #     - Execute remove_unusuable_kernels()
+        |   |       |   #     - Execute configure_hardware()
+        |   |       |   #     - Execute install_oem_extras() or install_extras()
+        |   |       |   #     - Execute configure_bootloader()
+        |   |       |   #     - Execute remove_oem_extras() or remove_extras()
+        |   |       |   #     - Execute install_restricted_extras()
+        |   |       |   #     - ...
         |   |       |-- start_slideshow()
         |   |       |
         |   |       `-- # [Success Commands]
@@ -382,7 +395,7 @@ Page<frontend> and Page
  * PageGtk will be executed to setup the GUI.
  * Page.run will be executed to enter main loop.
   * self.ui equals to the PageGtk instance?
-  * However, dell-eula does not have Page and can work.  It seems not to be necessary.
+  * Page is not necessary for a GUI-only plugin.  For example, dell-eula does not have Page and can work.
 
 Install
  * Plugin actions executed in the postinstall phase.
