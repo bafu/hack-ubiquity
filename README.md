@@ -11,6 +11,8 @@ Markdown live preview: http://tmpvar.com/markdown.html
 Ubiquity collects answers of questions from plugins, and then starts to install
 system based on these configuration values in Debconf.
 
+Send filtered Debconf commands to selected frontend to communicate with Debconf.
+
 ## Ubiquity Greeter and OEM Mode
 
 Greeter gives user two choices: install system directly, or try the system first.
@@ -209,15 +211,16 @@ debian/ubiquity.ubiquity.upstart  # kernel parameter `automatic-ubiquity' in pha
         `-- oem-config-remove-gtk  # Remove ubiquity-related packages
 
 ## Components Relationship
-                                      I                    I
-                       UntrustedBase ---> plugin.PluginUI ---> PageBase ---> Page<frontend>
-                             |
-                             | I
-                             v          I                  I
-    DebconfFilter ---> FilteredCommand ---> plugin.Plugin .--> Page
-                             |                            |                          I
-                             |                            `--> plugin.InstallPlugin ---> Install
-                             | I
+                                      I                    I   +plugin-----------------------------+
+                       UntrustedBase ---> plugin.PluginUI -----> PageBase ---> Page<frontend>      |
+                             |                                 |                                   |
+                             | I                               |                                   |
+                             v          I                  I   |                                   |
+    DebconfFilter ---> FilteredCommand ---> plugin.Plugin .----> Page                              |
+                             |                            |    +-------------------------+         |
+                             |                            |                              |         |
+                             |                            `--> plugin.InstallPlugin -----> Install |
+                             | I                                                         +---------+
                              |---> components.install.Install
                              |
                              | I
@@ -268,7 +271,9 @@ debian/ubiquity.ubiquity.upstart  # kernel parameter `automatic-ubiquity' in pha
  * Get a command from another process, check it with the valid_command, execute the valid command
  * Input:
   * db: DebconfCommunicator object
-  * widgets: The dictionary whose keys are XXX and values are <plugin>.Page objects and plugininstall.Install.
+  * widgets:
+   * The dictionary whose keys are XXX and values are <plugin>.Page objects and plugininstall.Install.
+   * Every widget has Debconf commands (widget.<debconf-cmd>).
 
 * UntrustedBase: Base template class for accessing Debconf?
 
