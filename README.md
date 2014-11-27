@@ -273,27 +273,27 @@ kernel commandline parameter
             `-- oem-config-remove-gtk  # Remove ubiquity-related packages
 
 ## Components Relationship
-                                      I                    I   +plugin-----------------------------+
-                       UntrustedBase ---> plugin.PluginUI -----> PageBase ---> Page<frontend>      |
-                             |                                 |                                   |
-                             | I                               |                                   |
-                             v          I                  I   |                                   |
-    DebconfFilter ---> FilteredCommand ---> plugin.Plugin .----> Page                              |
-                             |                            |    +-------------------------+         |
-                             |                            |                              |         |
-                             |                            `--> plugin.InstallPlugin -----> Install |
-                             | I                                                         +---------+
+                             I                                   I              +plugin------------------------+
+             UntrustedBase -----> plugin.PluginUI ------------------------------> PageBase ---> Page<frontend> |
+                             |                                                  |                              |
+                             v                                                  |                              |
+    DebconfFilter ---> FilteredCommand                                          |                              |
+                             |                                                  |                              |
+                             | I                   I                            |                              |
+                             |---> plugin.Plugin -------------------------------> Page                         |
+                             |                     |                            |                              |
+                             |                     `--> plugin.InstallPlugin ---> Install                      |
+                             |                                                  |                              |
+                             | I                                                +------------------------------+
                              |---> components.install.Install
                              |
                              | I
                              `---> components.plugininstall.Install (dbfilter)
                                                     |
                                                     |
-                                                    |
                                 +frontend-----------v----+
                                 | Controller ---> Wizard |
                                 +-------------------|----+
-                                                    |
                                                     |
                                                     v
                                                  Ubiquity
@@ -327,7 +327,8 @@ kernel commandline parameter
  * ok_handler(): when ok or forward is selected.
   * Triggered by GUI ok/forward button handler (on_next_clicked()). 
   * Execute frontend.debconffilter_done(). (entry point of postinstall?)
- * prepare(): return (executable-command, questions, environ)
+ * prepare()
+  * Return (executable-command, questions, environ)
 
 * DebconfFilter: Filte a debconf command from another process and execute it
  * Get a command from another process, check it with the valid_command, execute the valid command
