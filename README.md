@@ -203,68 +203,74 @@ kernel commandline parameter
     #     - noninteractive=1
     #   * ubiquity/frontend=*
     #     - frontend="${x#*=}"
-    debian/ubiquity.ubiquity.upstart  # kernel parameter `automatic-ubiquity' in phase1 and phase2 
+    #
+    # Note:
+    #   1. In official Ubuntu image, `only-ubiquity' is used if installation-related option is chose.
+    #   2. In Somerville image, kernel parameter `automatic-ubiquity' is used in phase1 and phase2.
+    debian/ubiquity.ubiquity.upstart
     `-- ubiquity-dm
-        `-- oem-config-wrapper (/usr/bin/ubiquity is another choice)
-            |-- oem-config  # symbolic link of /usr/lib/ubiquity/bin/ubiquity
-            |   |           # which is the real installer.  /usr/bin/ubiquity
-            |   |           # also launch the installer.
-            |   |-- # Set locale to UTF-8
-            |   |-- # Parse CLI args
-            |   |-- # Set environment variables
-            |   |-- # Set proper authority
-            |   |-- install()
-            |   |   `-- wizard.run()
-            |   |       |-- # [Disablers Phase]
-            |   |       |-- disable_{volume_manager, screensaver, powermgr}()
-            |   |       |
-            |   |       |-- # [Install Phase]
-            |   |       |   # Execute plugin pages.
-            |   |       |   #   * GUI with/without dbfilter.
-            |   |       |   #     * If with dbfilter, it's Page or Install.
-            |   |       |-- on_next_clicked()
-            |   |       |   |-- dbfilter.ok_handler()
-            |   |       |   |   `-- debconffilter_done()
-            |   |       |   |       `-- find_next_step()
-            |   |       |   |           `-- # Check finished_step and execute
-            |   |       |   |               # dbfilter.start(), ex:
-            |   |       |   |               #  * normal plugins
-            |   |       |   |               #  * ubi-partman
-            |   |       |   |               #  * ubiquity.component.partman_commit
-            |   |       |   |               #  * ubiquity.component.install
-            |   |       |   |               #  * ubiquity.component.plugininstall
-            |   |       |   `-- find_next_step()  # if dbfilter is None
-            |   |       |       `-- # The same as above
-            |   |       |
-            |   |       |-- # [Postinstall Phase]
-            |   |       |   # 1. postinstall starts after all the questions are
-            |   |       |   #    answered and slideshow appears.
-            |   |       |   # 2. plugininstall.py executes the install actions of plugins.
-            |   |       |   #   * prepare() returns /usr/share/ubiquity/plugininstall.py
-            |   |       |   #     - Execute configure_{python, network, locale, apt}()
-            |   |       |   #     - Execute configure_plugins()
-            |   |       |   #       + Execute Install of plugins
-            |   |       |   #     - Execute run_target_config_hooks()
-            |   |       |   #     - Execute install_language_packs()
-            |   |       |   #     - Execute remove_unusuable_kernels()
-            |   |       |   #     - Execute configure_hardware()
-            |   |       |   #     - Execute install_oem_extras() or install_extras()
-            |   |       |   #     - Execute configure_bootloader()
-            |   |       |   #     - Execute remove_oem_extras() or remove_extras()
-            |   |       |   #     - Execute install_restricted_extras()
-            |   |       |   #     - ...
-            |   |       |-- start_slideshow()
-            |   |       |
-            |   |       `-- # [Success Commands]
-            |   |           # 1. Get ubiquity/install/success_command and execute the result.
-            |   `-- run_oem_hooks() (if oem_config is True)
-            |       `-- # Run hook scripts in /usr/lib/oem-config/post-install
-            `-- oem-config-remove-gtk  # Remove ubiquity-related packages
-
+        `-- ubiquity (/usr/bin/ubiquity, it is called ubiquity-wrapper in source tree)
+            `-- ubiquity (the real installer which is at /usr/lib/ubiquity/bin/ubiquity)
+                |-- # Set locale to UTF-8
+                |-- # Parse CLI args
+                |-- # Set environment variables
+                |-- # Set proper authority
+                `-- install()
+                    `-- wizard.run()
+                        |-- # [Disablers Phase]
+                        |-- disable_{volume_manager, screensaver, powermgr}()
+                        |
+                        |-- # [Install Phase]
+                        |   # Execute plugin pages.
+                        |   #   * GUI with/without dbfilter.
+                        |   #     * If with dbfilter, it's Page or Install.
+                        |-- on_next_clicked()
+                        |   |-- dbfilter.ok_handler()
+                        |   |   `-- debconffilter_done()
+                        |   |       `-- find_next_step()
+                        |   |           `-- # Check finished_step and execute
+                        |   |               # dbfilter.start(), ex:
+                        |   |               #  * normal plugins
+                        |   |               #  * ubi-partman
+                        |   |               #  * ubiquity.component.partman_commit
+                        |   |               #  * ubiquity.component.install
+                        |   |               #  * ubiquity.component.plugininstall
+                        |   `-- find_next_step()  # if dbfilter is None
+                        |       `-- # The same as above
+                        |
+                        |-- # [Postinstall Phase]
+                        |   # 1. postinstall starts after all the questions are
+                        |   #    answered and slideshow appears.
+                        |   # 2. plugininstall.py executes the install actions of plugins.
+                        |   #   * prepare() returns /usr/share/ubiquity/plugininstall.py
+                        |   #     - Execute configure_{python, network, locale, apt}()
+                        |   #     - Execute configure_plugins()
+                        |   #       + Execute Install of plugins
+                        |   #     - Execute run_target_config_hooks()
+                        |   #     - Execute install_language_packs()
+                        |   #     - Execute remove_unusuable_kernels()
+                        |   #     - Execute configure_hardware()
+                        |   #     - Execute install_oem_extras() or install_extras()
+                        |   #     - Execute configure_bootloader()
+                        |   #     - Execute remove_oem_extras() or remove_extras()
+                        |   #     - Execute install_restricted_extras()
+                        |   #     - ...
+                        |-- start_slideshow()
+                        |
+                        `-- # [Success Commands]
+                            # 1. Get ubiquity/install/success_command and execute the result.
 
     oem-config.oem-config.upstart
     `-- oem-config-firstboot
+        |-- oem-config/early_command
         `-- oem-config-wrapper
+            |-- oem-config  # symbolic link of /usr/lib/ubiquity/bin/ubiquity
+            |   |           # which is the real installer.  /usr/bin/ubiquity
+            |   |           # also launch the installer.
+            |   `-- run_oem_hooks() (if oem_config is True)
+            |       `-- # Run hook scripts in /usr/lib/oem-config/post-install
+            |-- oem-config/late_command
+            `-- oem-config-remove-gtk  # Remove ubiquity-related packages
 
 ## Components Relationship
                                       I                    I   +plugin-----------------------------+
