@@ -273,15 +273,15 @@ kernel commandline parameter
             `-- oem-config-remove-gtk  # Remove ubiquity-related packages
 
 ## Components Relationship
-                             I            +plugin-template-------------+    +plugin------------------------+
-             UntrustedBase ---------------> plugin.PluginUI            |    | PageBase ---> Page<frontend> |
-                             |            |                            |    |                              |
-                             v          I |                            | I  |                              |
-    DebconfFilter ---> FilteredCommand ---> plugin.Plugin              |--->| Page                         |
-                             |            | |                          |    |                              |
-                             |            | | I                        |    |                              |
-                             |            | `---> plugin.InstallPlugin |    | Install                      |
-                             |            +----------------------------+    +------------------------------+                            
+                             I            +plugin-template-------+    +plugin------------------------+
+             UntrustedBase ---------------> plugin.PluginUI      |    | PageBase ---> Page<frontend> |
+                             |            |                      |    |                              |
+                             v          I |                      | I  |                              |
+    DebconfFilter ---> FilteredCommand ---> plugin.Plugin        |--->| Page                         |
+                             |            |   | I                |    |                              |
+                             |            |   v                  |    |                              |
+                             |            | plugin.InstallPlugin |    | Install                      |
+                             |            +----------------------+    +------------------------------+                            
                              | I
                              |---> components.install.Install
                              |
