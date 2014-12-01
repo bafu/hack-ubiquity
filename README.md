@@ -220,6 +220,9 @@ kernel commandline parameter
                         |-- # [Disablers Phase]
                         |-- disable_{volume_manager, screensaver, powermgr}()
                         |
+                        |-- # [Partman Commit Phase]
+                        |   # After ubi-partman.
+                        |
                         |-- # [Install Phase]
                         |   # Execute plugin pages.
                         |   #   * GUI with/without dbfilter.
@@ -243,18 +246,24 @@ kernel commandline parameter
                         |   #    answered and slideshow appears.
                         |   # 2. plugininstall.py executes the install actions of plugins.
                         |   #   * prepare() returns /usr/share/ubiquity/plugininstall.py
-                        |   #     - Execute configure_{python, network, locale, apt}()
-                        |   #     - Execute configure_plugins()
+                        |   #     - configure_{python, network, locale}()
+                        |   #     - configure_apt()
+                        |   #       + components/apt_setup
+                        |   #     - configure_plugins()
                         |   #       + Execute Install of plugins
-                        |   #     - Execute run_target_config_hooks()
-                        |   #     - Execute install_language_packs()
-                        |   #     - Execute remove_unusuable_kernels()
-                        |   #     - Execute configure_hardware()
-                        |   #     - Execute install_oem_extras() or install_extras()
-                        |   #     - Execute configure_bootloader()
-                        |   #     - Execute remove_oem_extras() or remove_extras()
-                        |   #     - Execute install_restricted_extras()
+                        |   #     - run_target_config_hooks()
+                        |   #     - install_language_packs()
+                        |   #     - remove_unusuable_kernels()
+                        |   #       + components/check_kernels
+                        |   #     - configure_hardware()
+                        |   #       + components/hw_detect
+                        |   #     - install_oem_extras() or install_extras()
+                        |   #     - configure_bootloader()
+                        |   #       + components/grubinstaller
+                        |   #     - remove_oem_extras() or remove_extras()
+                        |   #     - install_restricted_extras()
                         |   #     - ...
+                        |
                         |-- start_slideshow()
                         |
                         `-- # [Success Commands]
@@ -327,6 +336,7 @@ kernel commandline parameter
   * Execute frontend.debconffilter_done(). (entry point of postinstall?)
  * prepare()
   * Return (executable-command, questions, environ)
+  * scripts/* are the executable commands.
 
 * DebconfFilter: Filte a debconf command from another process and execute it
  * Get a command from another process, check it with the valid_command, execute the valid command
@@ -506,8 +516,9 @@ Plugin Structure
         set gfxpayload=keep
         linux /casper/vmlinuz.efi file=/cdrom/preseed/ubuntu.seed boot=casper quiet splash --
         initrd /casper/initrd.lz
-        # Enter system, the "Install Ubuntu 14.10" button on desktop
+        # * Enter system, the "Install Ubuntu 14.10" button on desktop
         #   * it is ubiquity.desktop which executes "sh -c 'ubiquity gtk_ui'"
+        # * ubuntu-desktop is installed.
     
     setparams 'Install Ubuntu'
         set gfxpayload=keep
