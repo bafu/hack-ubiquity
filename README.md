@@ -225,8 +225,8 @@ kernel commandline parameter
                         |
                         |-- # [Install Phase]
                         |   # Execute plugin pages.
-                        |   #   * GUI with/without dbfilter.
-                        |   #     * If with dbfilter, it's Page or Install.
+                        |   #  * GUI with/without dbfilter.
+                        |   #   * If with dbfilter, it's Page or Install.
                         |-- on_next_clicked()
                         |   |-- dbfilter.ok_handler()
                         |   |   `-- debconffilter_done()
@@ -471,7 +471,7 @@ postinstall (triggerred by the last "on_next_clicked")
 --------------------------------------------------------------------------------
 # Ubiquity Plugins, More Information
 
-Page<frontend> and Page
+Page<frontend> (UI class) and Page (filter class)
  * PageGtk will be executed to setup the GUI.
  * Page.run will be executed to enter main loop.
   * self.ui equals to the PageGtk instance?
