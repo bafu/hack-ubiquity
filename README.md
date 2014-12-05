@@ -28,17 +28,16 @@ OEM mode (TBD)
 
 Execution order of Ubiquity plugins:
 
- 1. language
- 1. prepare
+ 1. language (after none, weight 10)
+ 1. wireless (after language, weight 12)
+ 1. prepare (after wireless, weight 11)
   1. check available drive space and Internet connection, download updates, etc.
- 1. wireless
- 1. partman
- 1. timezone
- 1. console-setup
- 1. usersetup
- 1. network
- 1. tasks
- 1. webcam
+ 1. partman (after prepare, weight 11)
+ 1. timezone (after [partman, language], weight 10)
+ 1. console-setup (after timezone, weight 10)
+ 1. usersetup (after console-setup, weight 10)
+ 1. network (after usersetup, weight 12)
+ 1. tasks (after network, weight 12)
 
 ### oem-config
 
