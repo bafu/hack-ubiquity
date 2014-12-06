@@ -313,7 +313,8 @@ kernel commandline parameter
 
 ## Component Descriptions
 
-* Wizard: The core component of Ubiquity
+### Wizard: The core component of Ubiquity
+
  * Every frontend provides its Wizard.
  * init(): sets up plugins.
  * run(): the main part.
@@ -323,12 +324,25 @@ kernel commandline parameter
  * find_next_step():
  * debconffilter_done():
 
-* Controller: Define the control in a plugin.
+### Controller: Define the control in a plugin.
+
  * Every frontend provides its Controller.
  * Provide the common GUI framework for plugins?
 
-* FilteredCommand:
- * Prepare executable command, questions, and environment variables to DebconfFilter for communicating with Debconf.
+### FilteredCommand:
+
+Prepare executable command, questions, and environment variables to DebconfFilter for communicating with Debconf.
+
+It also provides default progress bar handlers.
+
+    start --> dbfilter.start
+    run_command
+    # called by debconffilter.processline(), command == 'INPUT'
+    run --> enter_ui_loop --> ok_handler/cancel_handler
+                              |--> exit_ui_loop
+                              |--> frontend.debconffilter_done
+                              `--> cleanup
+
  * Inherited by plugins.
  * ok_handler(): when ok or forward is selected.
   * Triggered by GUI ok/forward button handler (on_next_clicked()). 
@@ -337,15 +351,18 @@ kernel commandline parameter
   * Return (executable-command, questions, environ)
   * scripts/* are the executable commands.
 
-* DebconfFilter: Filte a debconf command from another process and execute it
+### DebconfFilter: Filte a debconf command from another process and execute it
+
  * Get a command from another process, check it with the valid_command, execute the valid command
  * Input:
   * db: DebconfCommunicator object
   * widgets: Refer to Glossary.
 
-* UntrustedBase: Base template class for accessing Debconf?
+### UntrustedBase: Base template class for accessing Debconf?
 
-* DebconfCommunicator: Wrapper of debconf-communicate used by frontends.
+### DebconfCommunicator: Wrapper of debconf-communicate used by frontends.
+
+DebconfCommunicator object is usually called `db' in source code.
 
 ## Misc
 execute plugins
