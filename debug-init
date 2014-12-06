@@ -7,7 +7,9 @@ IP=10.101.46.252
 MOUNTPOINT="$PWD/mnt"
 
 usage() {
-    echo "USAGE: debug-init mount|umount|ssh"
+    echo "USAGE: debug-init mount [target IP]"
+    echo "USAGE: debug-init umount"
+    echo "USAGE: debug-init ssh [target IP]"
     exit 1
 }
 
@@ -19,6 +21,11 @@ main() {
         exit 2
     fi
   
+    if [ "$2" != "" ]; then
+        IP=$2
+    fi
+    echo "Target IP: $IP"
+
     case $1 in
         mount)
             sshfs $USERNAME@$IP:/ "$MOUNTPOINT"
@@ -36,4 +43,4 @@ main() {
     esac
 }
 
-main $1
+main $1 $2
