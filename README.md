@@ -230,13 +230,20 @@ kernel commandline parameter
                         |   |-- dbfilter.ok_handler()
                         |   |   `-- debconffilter_done()
                         |   |       `-- find_next_step()
-                        |   |           `-- # Check finished_step and execute
-                        |   |               # dbfilter.start(), ex:
-                        |   |               #  * normal plugins
+                        |   |           `-- # Check current finished_step and execute dbfilter.start(), ex:
+                        |   |               #  * final normal plugin
+                        |   |               #    - dbfilter = plugininstall.Install
+                        |   |               #    - dbfilter.start()
                         |   |               #  * ubi-partman
                         |   |               #  * ubiquity.component.partman_commit
+                        |   |               #    - dbfilter = install.Install
+                        |   |               #    - dbfilter.start()
                         |   |               #  * ubiquity.component.install
+                        |   |               #    - dbfilter = plugininstall.Install
+                        |   |               #    - dbfilter.start()
                         |   |               #  * ubiquity.component.plugininstall
+                        |   |               #    - installing = False
+                        |   |               #    - run_success_cmd()
                         |   `-- find_next_step()  # if dbfilter is None
                         |       `-- # The same as above
                         |
@@ -350,6 +357,8 @@ It also provides default progress bar handlers.
  * prepare()
   * Return (executable-command, questions, environ)
   * scripts/* are the executable commands.
+ * install()
+  * run_command() --> prepare()
 
 ### DebconfFilter: Filte a debconf command from another process and execute it
 
@@ -555,6 +564,9 @@ Plugin Structure
 
 --------------------------------------------------------------------------------
 # Glossary
+
+filter class
+  The Page class of a widget.
 
 oem-config
 
