@@ -171,6 +171,32 @@ kernel commandline parameter
 /var/log/installer/debug
 /var/log/oem-config.log
 
+## Preceed
+
+  * [Using preceeding](https://www.debian.org/releases/wheezy/i386/apbs02.html.en)
+  * [DesktopCDOptions](https://wiki.ubuntu.com/DesktopCDOptions)
+  * [UbiquityAutomation](https://wiki.ubuntu.com/UbiquityAutomation)
+  * [ubuntu-trusty-preceed.seed](https://gist.github.com/moonwitch/11100762)
+
+oem-config-prepare
+  * 2 modes: Standard (end-user) and Retail
+  * 
+oem-config-reconfig
+
+  * localechooser/languagelist=en
+  * time/zone=US/Eastern
+  * debian-installer/country=US
+  * keyboard-configuration/modelcode=pc105
+  * keyboard-configuration/layoutcode=us
+  * passwd/user-fullname=u
+  * passwd/username=u
+  * passwd/user-password=u
+  * passwd/user-password-again=u
+  * passwd/user-uid=29999
+  * passwd/auto-login=false
+  * user-setup/encrypt-home=false
+  * dell-recovery/destination=none
+
 ## Other Tips
 
 * Print debugging messages directly via syslog.syslog().
