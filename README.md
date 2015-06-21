@@ -2,16 +2,22 @@
 Markdown live preview: http://tmpvar.com/markdown.html
 -->
 
-# Contents
+# Hack Ubiquity
+
+[Ubiquity](https://wiki.ubuntu.com/Ubiquity) is the default installer for Ubuntu and is based on [Debian Installer (d-i)](https://wiki.debian.org/DebianInstaller).
+
+--------------------------------------------------------------------------------
+# Table of Contents
 
   * [Concepts](#concepts)
-  * [Debinan pakcages created by Ubiquity](debian-packages-created-by-ubiquity)
-  * [Debugging](#debugging)
   * [Source Code Structure](#source-code-structure)
   * [Ubiquity Plugins, More Information](#ubiquity-plugins-more-information)
+  * [Debugging](#debugging)
   * [Bootloader-Related Information](#bootloader-related-information)
+  * [Debinan pakcages created by Ubiquity](debian-packages-created-by-ubiquity)
   * [Glossary](#glossary)
 
+--------------------------------------------------------------------------------
 # Concepts
 
     Init  Plugin1  Plugin2  ...  PluginN  Postinstall  Finish
@@ -77,144 +83,9 @@ TBD
 Q1: How does a plugin communicate (get/set) with Debconf?
 
 --------------------------------------------------------------------------------
-# Debinan pakcages created by Ubiquity
-
-<table>
-<tr>
-  <td>oem-config</td>
-  <td>Perform end-user configuration after initial OEM installation</td>
-</tr>
-<tr>
-  <td>oem-config-check</td>
-  <td>enter OEM mode if requested</td>
-</tr>
-<tr>
-  <td>oem-config-{debconf,gtk,kde}</td>
-  <td>debconf/GTK+/KDE frontend for end-user post-OEM-install configuration</td>
-</tr>
-<tr>
-  <td>oem-config-remaster</td>
-  <td>Remaster a CD with additional oem-config functionality</td>
-</tr>
-<tr>
-  <td>oem-config-udeb</td>
-  <td>Prepare for OEM configuration</td>
-</tr>
-<tr>
-  <td>ubiquity</td>
-  <td>Ubuntu live CD installer</td>
-</tr>
-<tr>
-  <td>ubiquity-frontend-{debconf,gtk,kde}</td>
-  <td>debconf/GTK+/KDE frontend for Ubiquity live installer</td>
-</tr>
-<tr>
-  <td>ubiquity-ubuntu-artwork</td>
-  <td>Ubuntu artwork for Ubiquity live installer</td>
-</tr>
-</table>
-
-**oem-config.install**
-
- * bin/oem-config-firstboot usr/sbin
- * bin/oem-config-prepare usr/sbin
- * bin/oem-config-remove usr/sbin
- * bin/oem-config-wrapper usr/sbin
- * scripts/ubi-reload-keyboard /usr/lib/oem-config/post-install
-
-**oem-config-check.install**
-
- * debian-installer-startup.d lib
- * main-menu.d lib
-
-**oem-config-gtk.install**
-
- * Replace part of oem-config.
- * desktop/oem-config-prepare-gtk.desktop usr/share/ubiquity/desktop
- * bin/oem-config-remove-gtk usr/sbin
-
-**oem-config-remaster.install**
-
- * bin/oem-config-remaster usr/sbin
-
-**oem-config-udeb.install**
-
- * finish-install.d usr/lib
-
---------------------------------------------------------------------------------
-# Debugging
-
-* [Hacking on Ubiquity, the setup](http://agateau.com/2013/04/30/hacking-on-ubiquity-the-setup/)
-* [Debugging Ubiquity](https://wiki.ubuntu.com/DebuggingUbiquity)
-* [Ubiquity (kubuntu wiki)](https://wiki.kubuntu.org/Ubiquity)
-* [Custimize Live Initrd](https://wiki.ubuntu.com/CustomizeLiveInitrd)
-
-kernel commandline parameter
-
-* phase 1: automatic-ubiquity
-* phase 2: automatic-ubiquity
-* phase 3:
- * # ubiquity-dm <vt> <display> <username> <program> [<arguments>]
- * ubiquity-dm vt7 :0 oem /usr/sbin/oem-config-wrapper --only --debug
-
-## Utilities Usage
-
-* For host
- * debug-init: Initialize host debugging environment and provide mount/umount/ssh commands to access target remotely.
-* For target
- * debug-ubiquity.sh: Launch Ubiquity with proper debugging parameters.
-
-## Workflow
-
-    # launch ubiquity
-    host $ ./debug-init ssh
-    targ $ ./debug-ubiquity.sh start &
-    targ $ DISPLAY=:0 gnome-terminal &
-
-    # modify ubiquity
-    host $ vim mnt/<target file>
-
-## Log Files
-
-  * /var/log/installer/dm
-  * /var/log/installer/syslog
-  * /var/log/installer/debug
-  * /var/log/oem-config.log
-
-## Preceed
-
-  * [Using preceeding](https://www.debian.org/releases/wheezy/i386/apbs02.html.en)
-  * [DesktopCDOptions](https://wiki.ubuntu.com/DesktopCDOptions)
-  * [UbiquityAutomation](https://wiki.ubuntu.com/UbiquityAutomation)
-  * [ubuntu-trusty-preceed.seed](https://gist.github.com/moonwitch/11100762)
-
-oem-config-prepare
-  * 2 modes: Standard (end-user) and Retail
-  * 
-oem-config-reconfig
-
-  * localechooser/languagelist=en
-  * time/zone=US/Eastern
-  * debian-installer/country=US
-  * keyboard-configuration/modelcode=pc105
-  * keyboard-configuration/layoutcode=us
-  * passwd/user-fullname=u
-  * passwd/username=u
-  * passwd/user-password=u
-  * passwd/user-password-again=u
-  * passwd/user-uid=29999
-  * passwd/auto-login=false
-  * user-setup/encrypt-home=false
-  * dell-recovery/destination=none
-
-## Other Tips
-
-* Print debugging messages directly via syslog.syslog().
-* Use watch command to monitor syslog.
- * $ watch -n 1 tail -n 30 /var/log/syslog
-
---------------------------------------------------------------------------------
 # Source Code Structure
+
+You can get the latest source code from the [Ubiquity project](https://launchpad.net/ubiquity).
 
 ## Code Flow
 
@@ -552,8 +423,8 @@ Plugin Structure
     |     |       __init__
     |     |       set_language
     |     |       get_language
-    |     `--   PageDebconf
-    |             __init__
+    |     `-- PageDebconf
+    |           __init__
     |   
     |-- plugin.Plugin
     |     Page
@@ -567,6 +438,80 @@ Plugin Structure
           Install
             prepare (optional)
             install
+
+--------------------------------------------------------------------------------
+# Debugging
+
+* [Hacking on Ubiquity, the setup](http://agateau.com/2013/04/30/hacking-on-ubiquity-the-setup/)
+* [Debugging Ubiquity](https://wiki.ubuntu.com/DebuggingUbiquity)
+* [Ubiquity (kubuntu wiki)](https://wiki.kubuntu.org/Ubiquity)
+* [Custimize Live Initrd](https://wiki.ubuntu.com/CustomizeLiveInitrd)
+
+Default kernel commandline parameters
+
+  * phase 1: automatic-ubiquity
+  * phase 2: automatic-ubiquity
+  * phase 3:
+   * # ubiquity-dm <vt> <display> <username> <program> [<arguments>]
+   * ubiquity-dm vt7 :0 oem /usr/sbin/oem-config-wrapper --only --debug
+
+## Log Files
+
+  * /var/log/installer/dm
+  * /var/log/installer/syslog
+  * /var/log/installer/debug
+  * /var/log/oem-config.log
+
+## Preceed
+
+  * [Using preceeding](https://www.debian.org/releases/jessie/amd64/apbs02.html.en)
+  * [DesktopCDOptions](https://wiki.ubuntu.com/DesktopCDOptions)
+  * [UbiquityAutomation](https://wiki.ubuntu.com/UbiquityAutomation)
+  * [ubuntu-trusty-preceed.seed](https://gist.github.com/moonwitch/11100762)
+
+oem-config-prepare
+  * 2 modes: Standard (end-user) and Retail
+
+oem-config-reconfig
+
+  * localechooser/languagelist=en
+  * time/zone=US/Eastern
+  * debian-installer/country=US
+  * keyboard-configuration/modelcode=pc105
+  * keyboard-configuration/layoutcode=us
+  * passwd/user-fullname=u
+  * passwd/username=u
+  * passwd/user-password=u
+  * passwd/user-password-again=u
+  * passwd/user-uid=29999
+  * passwd/auto-login=false
+  * user-setup/encrypt-home=false
+  * dell-recovery/destination=none
+
+## Utilities Usage
+
+* For host
+ * debug-init: Initialize host debugging environment and provide mount/umount/ssh commands to access target remotely.
+* For target
+ * debug-ubiquity.sh: Launch Ubiquity with proper debugging parameters.
+
+## My debugging flow
+
+Setup debugging environment:
+
+    # launch ubiquity
+    host $ ./debug-init ssh
+    targ $ ./debug-ubiquity.sh start &
+    targ $ DISPLAY=:0 gnome-terminal &
+
+    # modify ubiquity
+    host $ vim mnt/<target file>
+
+Get debugging messages dynamically:
+
+  * Print debugging messages directly via syslog.syslog().
+  * Use watch command to monitor syslog.
+   * $ watch -n 1 tail -n 30 /var/log/syslog
 
 --------------------------------------------------------------------------------
 # Bootloader-Related Information
@@ -597,6 +542,71 @@ Plugin Structure
         # `-- casper-md5check
         linux /casper/vmlinuz.efi file=/cdrom/preseed/ubuntu.seed boot=casper integrity-check quiet splash --
         initrd /casper/initrd.lz
+
+--------------------------------------------------------------------------------
+# Debinan pakcages created by Ubiquity
+
+<table>
+<tr>
+  <td>oem-config</td>
+  <td>Perform end-user configuration after initial OEM installation</td>
+</tr>
+<tr>
+  <td>oem-config-check</td>
+  <td>enter OEM mode if requested</td>
+</tr>
+<tr>
+  <td>oem-config-{debconf,gtk,kde}</td>
+  <td>debconf/GTK+/KDE frontend for end-user post-OEM-install configuration</td>
+</tr>
+<tr>
+  <td>oem-config-remaster</td>
+  <td>Remaster a CD with additional oem-config functionality</td>
+</tr>
+<tr>
+  <td>oem-config-udeb</td>
+  <td>Prepare for OEM configuration</td>
+</tr>
+<tr>
+  <td>ubiquity</td>
+  <td>Ubuntu live CD installer</td>
+</tr>
+<tr>
+  <td>ubiquity-frontend-{debconf,gtk,kde}</td>
+  <td>debconf/GTK+/KDE frontend for Ubiquity live installer</td>
+</tr>
+<tr>
+  <td>ubiquity-ubuntu-artwork</td>
+  <td>Ubuntu artwork for Ubiquity live installer</td>
+</tr>
+</table>
+
+**oem-config.install**
+
+ * bin/oem-config-firstboot usr/sbin
+ * bin/oem-config-prepare usr/sbin
+ * bin/oem-config-remove usr/sbin
+ * bin/oem-config-wrapper usr/sbin
+ * scripts/ubi-reload-keyboard /usr/lib/oem-config/post-install
+
+**oem-config-check.install**
+
+ * debian-installer-startup.d lib
+ * main-menu.d lib
+
+**oem-config-gtk.install**
+
+ * Replace part of oem-config.
+ * desktop/oem-config-prepare-gtk.desktop usr/share/ubiquity/desktop
+ * bin/oem-config-remove-gtk usr/sbin
+
+**oem-config-remaster.install**
+
+ * bin/oem-config-remaster usr/sbin
+
+**oem-config-udeb.install**
+
+ * finish-install.d usr/lib
 
 --------------------------------------------------------------------------------
 # Glossary
