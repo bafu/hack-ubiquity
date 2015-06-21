@@ -2,6 +2,16 @@
 Markdown live preview: http://tmpvar.com/markdown.html
 -->
 
+# Contents
+
+  * [Concepts](#concepts)
+  * [Debinan pakcages created by Ubiquity](debian-packages-created-by-ubiquity)
+  * [Debugging](#debugging)
+  * [Source Code Structure](#source-code-structure)
+  * [Ubiquity Plugins, More Information](#ubiquity-plugins-more-information)
+  * [Bootloader-Related Information](#bootloader-related-information)
+  * [Glossary](#glossary)
+
 # Concepts
 
     Init  Plugin1  Plugin2  ...  PluginN  Postinstall  Finish
@@ -166,10 +176,10 @@ kernel commandline parameter
 
 ## Log Files
 
-/var/log/installer/dm
-/var/log/installer/syslog
-/var/log/installer/debug
-/var/log/oem-config.log
+  * /var/log/installer/dm
+  * /var/log/installer/syslog
+  * /var/log/installer/debug
+  * /var/log/oem-config.log
 
 ## Preceed
 
@@ -615,9 +625,3 @@ widgets
 
   For more details, please refer to the comment in debconffilter.py.
 
---------------------------------------------------------------------------------
-# Misc.
-
-All the subsystems are mixed together in the same source tree.  When I trace a
-file, it is hard to know where the file is executed in the entire installation
-process.
