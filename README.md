@@ -71,8 +71,8 @@ Execution order of Ubiquity plugins:
  1. timezone
  1. keyboard
  1. usersetup
- 1. <post-install>
- 1. <reboot>
+ 1. # post-install
+ 1. # reboot
 
 ## Cooperate with Debian Installer
 
